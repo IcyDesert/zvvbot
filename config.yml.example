@@ -1,0 +1,5 @@
+napcatAccessToken: your-napcat-http-server-token
+QQ: your-bot-qq-number
+goListenPort: "6432"
+napcatAPIPort: "3001"
+napcatAPIHost: "napcat"

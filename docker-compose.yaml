@@ -1,0 +1,40 @@
+services:
+    napcat:
+        image: mlikiowa/napcat-docker:latest
+        container_name: napcat
+        restart: always
+        environment:
+            - NAPCAT_UID=${NAPCAT_UID}
+            - NAPCAT_GID=${NAPCAT_GID}
+        ports:
+            - 3000:3000
+            - 3001:3001
+            - 6099:6099
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "5m"
+                max-file: "3"
+    
+    zvvbot:
+        build: 
+            context: .
+            network: host # 构建过程使用宿主机网络
+            args:
+                http_proxy: http://localhost:7897
+                https_proxy: http://localhost:7897
+        container_name: zvvbot
+        restart: always
+        depends_on:
+            - napcat
+        environment:
+            - NAPCAT_API_HOST=napcat
+        ports:
+            - "6432:6432"
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "5m"
+                max-file: "3"
