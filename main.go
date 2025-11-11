@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"encoding/json"
 
@@ -30,6 +31,11 @@ Note:
 `
 
 func main() {
+	// 时区设置
+	// loc, _ := time.LoadLocation("Asia/Shanghai")
+	// now := time.Now().In(loc)
+	// fmt.Println(now)
+
 	viper.SetConfigFile("config.yml")
 	viper.AutomaticEnv()
 	viper.BindEnv("napcatAPIHost", "NAPCAT_API_HOST")
@@ -45,6 +51,9 @@ func main() {
 			GoListenPort:      viper.GetString("goListenPort"),
 			NapcatAPIPort:     viper.GetString("napcatAPIPort"),
 			NapcatAPIHost:     viper.GetString("napcatAPIHost"),
+		},
+		Client: &http.Client{
+			Timeout: 20 * time.Second,
 		},
 	}
 
@@ -189,8 +198,12 @@ func (app *Application) sendMessage(groupID int64, message []MsgComponent) {
 func (app *Application) SendPic(groupID int64, URL string) {
 	u, err := url.Parse(URL)
 	imageName := "我们的网民有很多创意" // 默认值
+
 	if err == nil {
-		imageName = filepath.Base(u.Path)
+		fullName := filepath.Base(u.Path)
+		imageName = strings.TrimSuffix(fullName, filepath.Ext(fullName))
+	} else {
+		log.Printf("err parsing URL %v: encounter %v", u, err) // 错误降级，不中断程序
 	}
 
 	message := []MsgComponent{

@@ -31,6 +31,10 @@ services:
             - napcat
         environment:
             - NAPCAT_API_HOST=napcat
+        #     - TZ=Asia/Shanghai
+        # volumes:
+        #     - /etc/localtime:/etc/localtime:ro
+        #     - /etc/timezone:/etc/timezone:ro
         ports:
             - "6432:6432"
         logging:

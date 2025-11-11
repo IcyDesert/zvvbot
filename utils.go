@@ -22,8 +22,7 @@ func (app *Application) Post(URL string, payload []byte, token string) (err erro
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := app.Client.Do(req)
 	if err != nil {
 		log.Printf("Error sending message to napcat: %v", err)
 		return
